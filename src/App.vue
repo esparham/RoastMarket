@@ -1,30 +1,50 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
-  <router-view/>
+  <HeaderComponent @showModal="showFilterModal = true" :showHeader="showHeader"></HeaderComponent>
+  <teleport to="body">
+    <FilterModal :show="showFilterModal" @hideModal="showFilterModal = false"></FilterModal>
+  </teleport>
+  <router-view />
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+import HeaderComponent from '@/components/Header.vue';
+import FilterModal from '@/components/FilterModal.vue';
 
-nav {
-  padding: 30px;
+export default {
+  data() {
+    return {
+      showFilterModal: false,
+      showHeader: true,
+    }
+  },
+  components: {
+    HeaderComponent,
+    FilterModal
+  },
+  computed: {
+    artikels: function () {
+      if (this.filteredProducts && this.filteredProducts.length > 0) {
+        const productsLength = this.filteredProducts.length;
+        return `${productsLength} ${productsLength > 1 ? 'Artikels' : 'Artikel'}`;
+      }
+      return 'No Artikel found!';
+    }
+  },
+  mounted() {
+    const self = this;
+    let lastScrollTop = 0;
+    window.addEventListener("scroll", function () {
+      let st = window.pageYOffset || document.documentElement.scrollTop;
+      if (st > lastScrollTop) {
+        self.showHeader = false;
+      } else {
+        self.showHeader = true;
+      }
+      lastScrollTop = st <= 0 ? 0 : st;
+    }, false);
+  },
+  async created() {
+    await this.$store.dispatch('fetchData');
+  },
 }
-
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-nav a.router-link-exact-active {
-  color: #42b983;
-}
-</style>
+</script>

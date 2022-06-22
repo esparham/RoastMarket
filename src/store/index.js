@@ -74,8 +74,10 @@ export default createStore({
   },
   actions: {
     async fetchData(context) {
+      try {
       const response = await fetch(config.api, {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: { "query": { "bool": { "filter": { "bool": { "must": [{ "terms": { "visibility": [2, 3, 4] } }, { "terms": { "status": [0, 1] } }, { "terms": { "category_ids": [5] } }] } } } } }
       });
 
@@ -91,6 +93,9 @@ export default createStore({
       context.commit('setProducts', {
         products: responseData,
       });
+        } catch (error) {
+        console.log(error);
+      }
     },
   },
 })

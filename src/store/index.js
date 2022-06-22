@@ -46,7 +46,7 @@ export default createStore({
           return (productA['_source']['yotpo_rating'] < productB['_source']['yotpo_rating']) ? 1 : -1;
         }
       }
-      const sortedProducts = state.products.hits.hits.sort(compareProducts).sort(p => p['_source'].stock['is_in_stock'] ? 1 : -1);
+      const sortedProducts = state.products.hits.hits.sort(p => p['_source'].stock['is_in_stock'] ? 1 : -1).sort(compareProducts);
 
       return sortedProducts.filter(
         p =>
@@ -77,6 +77,7 @@ export default createStore({
       try {
       const response = await fetch(config.api, {
         method: 'POST',
+        headers: { 'content-type': 'application/json; charset=utf-8' },
         body: { "query": { "bool": { "filter": { "bool": { "must": [{ "terms": { "visibility": [2, 3, 4] } }, { "terms": { "status": [0, 1] } }, { "terms": { "category_ids": [5] } }] } } } } }
       });
 

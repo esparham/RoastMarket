@@ -37,18 +37,6 @@ export default {
     }
   },
 
-  mounted() {
-    let lastScrollTop = 0;
-    window.addEventListener("scroll", function () {
-      let st = window.pageYOffset || document.documentElement.scrollTop;
-      if (st > lastScrollTop) {
-        this.showHeader = false;
-      } else {
-        this.showHeader = true;
-      }
-      lastScrollTop = st <= 0 ? 0 : st;
-    }, false);
-  },
   async created() {
     await this.$store.dispatch('fetchData');
   },
